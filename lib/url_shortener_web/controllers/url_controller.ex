@@ -3,6 +3,7 @@ defmodule UrlShortenerWeb.URLController do
 
   alias UrlShortener.Shortener
   alias UrlShortener.Shortener.URL
+  alias UrlShortener.Hash.Base62
 
   action_fallback UrlShortenerWeb.FallbackController
 
@@ -23,14 +24,25 @@ defmodule UrlShortenerWeb.URLController do
     end
   end
 
-  def show(conn, %{"id" => hash}) do
-    url = Shortener.get_url!(hash)
+  def show(conn, %{"id" => hash}) when is_binary(hash) do
+    url =
+      hash
+      |> Base62.decode()
+      |> Shortener.get_url!()
+
+    render(conn, "show.json", url: url)
+  end
+
+  def show(conn, %{"id" => id}) when is_integer(id) do
+    url = Shortener.get_url!(id)
+
     render(conn, "show.json", url: url)
   end
 
   def get_and_redirect(conn, %{"id" => hash}) do
     url =
       hash
+      |> Base62.decode()
       |> Shortener.get_url!()
       |> Map.get(:url)
 

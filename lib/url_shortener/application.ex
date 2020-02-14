@@ -11,9 +11,7 @@ defmodule UrlShortener.Application do
       # Start the Ecto repository
       UrlShortener.Repo,
       # Start the endpoint when the application starts
-      UrlShortenerWeb.Endpoint,
-      # Start id generator
-      Counter.Counter
+      UrlShortenerWeb.Endpoint
       # Starts a worker by calling: UrlShortener.Worker.start_link(arg)
       # {UrlShortener.Worker, arg},
     ]

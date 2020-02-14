@@ -1,4 +1,4 @@
-defmodule Hash.Base62 do
+defmodule UrlShortener.Hash.Base62 do
   @moduledoc """
   Base62 encoder
   """

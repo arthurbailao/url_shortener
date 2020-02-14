@@ -7,6 +7,7 @@ defmodule UrlShortener.Shortener do
   alias UrlShortener.Repo
 
   alias UrlShortener.Shortener.URL
+  alias UrlShortener.Hash.Base62
 
   @doc """
   Gets a single url.
@@ -15,14 +16,14 @@ defmodule UrlShortener.Shortener do
 
   ## Examples
 
-      iex> get_url!("aBc")
+      iex> get_url!(1)
       %URL{}
 
-      iex> get_url!("dEf")
+      iex> get_url!(2)
       ** (Ecto.NoResultsError)
 
   """
-  def get_url!(hash), do: Repo.get!(URL, hash)
+  def get_url!(id), do: Repo.get!(URL, id)
 
   @doc """
   Creates a url.
@@ -37,15 +38,7 @@ defmodule UrlShortener.Shortener do
 
   """
   def create_url(attrs \\ %{}) do
-    hash =
-      1
-      |> Counter.Counter.generate()
-      |> Enum.to_list()
-      |> List.first()
-      |> Hash.Base62.encode()
-
     %URL{}
-    |> Map.put(:hash, hash)
     |> URL.changeset(attrs)
     |> Repo.insert()
   end
@@ -53,18 +46,8 @@ defmodule UrlShortener.Shortener do
   def create_urls(%{"urls" => urls}) do
     now = NaiveDateTime.utc_now() |> NaiveDateTime.truncate(:second)
 
-    bulk =
-      urls
-      |> length()
-      |> Counter.Counter.generate()
-      |> Enum.to_list()
-      |> Enum.map(&Hash.Base62.encode/1)
-      |> Enum.map(&%{hash: &1})
-      |> Enum.zip(urls)
-      |> Enum.map(fn {hash, url} ->
-        Map.merge(hash, %{url: url, inserted_at: now, updated_at: now})
-      end)
+    bulk = Enum.map(urls, &%{url: &1, inserted_at: now, updated_at: now})
 
-    Repo.insert_all(URL, bulk, returning: [:hash, :url])
+    Repo.insert_all(URL, bulk, returning: [:id, :url])
   end
 end
