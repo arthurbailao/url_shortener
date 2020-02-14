@@ -39,7 +39,12 @@ defmodule UrlShortener.MixProject do
       {:ecto_sql, "~> 3.1"},
       {:postgrex, ">= 0.0.0"},
       {:jason, "~> 1.0"},
-      {:plug_cowboy, "~> 2.0"}
+      {:plug_cowboy, "~> 2.0"},
+      {:prometheus_ex, "~> 3.0"},
+      {:prometheus_ecto, "~> 1.4"},
+      {:prometheus_phoenix, "~> 1.3"},
+      {:prometheus_plugs, "~> 1.1"},
+      {:prometheus_process_collector, "~> 1.4"}
     ]
   end
 
