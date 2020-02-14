@@ -8,10 +8,11 @@ defmodule UrlShortenerWeb.Router do
   scope "/api", UrlShortenerWeb do
     pipe_through :api
 
-    resources "/urls", URLController, only: [:create, :show]
+    post "/urls", URLController, :create
+    get "/urls/:hash", URLController, :show
   end
 
   scope "/", UrlShortenerWeb do
-    get "/:id", URLController, :get_and_redirect
+    get "/:hash", URLController, :get_and_redirect
   end
 end

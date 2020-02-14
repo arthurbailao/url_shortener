@@ -24,7 +24,7 @@ defmodule UrlShortenerWeb.URLController do
     end
   end
 
-  def show(conn, %{"id" => hash}) when is_binary(hash) do
+  def show(conn, %{"hash" => hash}) do
     url =
       hash
       |> Base62.decode()
@@ -33,13 +33,7 @@ defmodule UrlShortenerWeb.URLController do
     render(conn, "show.json", url: url)
   end
 
-  def show(conn, %{"id" => id}) when is_integer(id) do
-    url = Shortener.get_url!(id)
-
-    render(conn, "show.json", url: url)
-  end
-
-  def get_and_redirect(conn, %{"id" => hash}) do
+  def get_and_redirect(conn, %{"hash" => hash}) do
     url =
       hash
       |> Base62.decode()
