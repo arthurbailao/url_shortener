@@ -12,9 +12,10 @@ defmodule UrlShortenerWeb.URLView do
   end
 
   def render("url.json", %{url: url}) do
-    url
-    |> Map.from_struct()
-    |> Map.take([:url])
-    |> Map.merge(%{hash: Base62.encode(url.id)})
+    hash = Base62.encode(url.id)
+
+    short_url = URI.merge(UrlShortenerWeb.Endpoint.url(), hash) |> URI.to_string()
+
+    %{hash: hash, short_url: short_url, url: url.url}
   end
 end
