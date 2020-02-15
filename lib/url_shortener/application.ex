@@ -3,6 +3,8 @@ defmodule UrlShortener.Application do
   # for more information on OTP Applications
   @moduledoc false
 
+  alias UrlShortenerWeb.Instrumenter
+
   use Application
 
   def start(_type, _args) do
@@ -15,6 +17,28 @@ defmodule UrlShortener.Application do
       # Starts a worker by calling: UrlShortener.Worker.start_link(arg)
       # {UrlShortener.Worker, arg},
     ]
+
+    # Prometheus setup
+    require Prometheus.Registry
+
+    Instrumenter.Phoenix.setup()
+    Instrumenter.Pipeline.setup()
+
+    if :os.type() == {:unix, :linux} do
+      Prometheus.Registry.register_collector(:prometheus_process_collector)
+    end
+
+    :ok =
+      :telemetry.attach(
+        "prometheus-ecto",
+        [:url_shortener, :repo, :query],
+        &Instrumenter.Repo.handle_event/4,
+        %{}
+      )
+
+    Instrumenter.Repo.setup()
+
+    Instrumenter.PlugExporter.setup()
 
     # See https://hexdocs.pm/elixir/Supervisor.html
     # for other strategies and supported options
