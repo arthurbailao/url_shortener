@@ -18,6 +18,8 @@ defmodule UrlShortenerWeb.Endpoint do
 
   plug Plug.RequestId
   plug Plug.Telemetry, event_prefix: [:phoenix, :endpoint]
+  plug UrlShortenerWeb.Instrumenter.PlugExporter
+  plug UrlShortenerWeb.Instrumenter.Pipeline
 
   plug Plug.Parsers,
     parsers: [:urlencoded, :multipart, :json],
