@@ -7,7 +7,6 @@ defmodule UrlShortener.Shortener do
   alias UrlShortener.Repo
 
   alias UrlShortener.Shortener.URL
-  alias UrlShortener.Hash.Base62
 
   @doc """
   Gets a single url.
