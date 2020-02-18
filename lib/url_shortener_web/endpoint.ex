@@ -10,16 +10,6 @@ defmodule UrlShortenerWeb.Endpoint do
     signing_salt: "pzCfVPtt"
   ]
 
-  # Serve at "/" the static files from "priv/static" directory.
-  #
-  # You should set gzip to true if you are running phx.digest
-  # when deploying your static files in production.
-  plug Plug.Static,
-    at: "/",
-    from: :url_shortener,
-    gzip: false,
-    only: ~w(css fonts images js favicon.ico robots.txt)
-
   # Code reloading can be explicitly enabled under the
   # :code_reloader configuration of your endpoint.
   if code_reloading? do
@@ -28,6 +18,8 @@ defmodule UrlShortenerWeb.Endpoint do
 
   plug Plug.RequestId
   plug Plug.Telemetry, event_prefix: [:phoenix, :endpoint]
+  plug UrlShortenerWeb.Instrumenter.PlugExporter
+  plug UrlShortenerWeb.Instrumenter.Pipeline
 
   plug Plug.Parsers,
     parsers: [:urlencoded, :multipart, :json],

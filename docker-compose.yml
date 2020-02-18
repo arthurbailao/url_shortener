@@ -1,0 +1,56 @@
+version: "3"
+services:
+  app:
+    build: .
+    command: ["bin/url_shortener", "start"]
+    environment:
+      - SECRET_KEY_BASE=verylongstringhere
+      - DATABASE_URL=ecto://postgres:postgres@db/url_shortener
+    ports:
+      - "4000:4000"
+
+  db:
+    image: postgres
+    environment:
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - dbdata:/var/lib/postgresql/data
+
+  prometheus:
+    image: prom/prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus/:/etc/prometheus/
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/usr/share/prometheus/console_libraries'
+      - '--web.console.templates=/usr/share/prometheus/consoles'
+    restart: always
+
+
+  grafana:
+    image: grafana/grafana:5.4.3
+    user: "104"
+    volumes:
+      - grafana_data:/var/lib/grafana
+    links:
+      - prometheus
+    ports:
+      - "3000:3000"
+    restart: always
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080
+
+volumes:
+  dbdata:
+  prometheus_data:
+  grafana_data:
