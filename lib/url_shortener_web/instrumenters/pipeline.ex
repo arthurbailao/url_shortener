@@ -5,6 +5,6 @@ defmodule UrlShortenerWeb.Instrumenter.Pipeline do
   use Prometheus.PlugPipelineInstrumenter
   @spec label_value(:request_path, Plug.Conn.t()) :: binary
   def label_value(:request_path, conn) do
-    conn.request_path
+    Regex.replace(~r/^\/[0-9a-zA-Z]+$/, conn.request_path, "/:hash")
   end
 end
